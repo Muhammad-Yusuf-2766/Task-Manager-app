@@ -21,7 +21,7 @@ const taskSchema = new mongoose.Schema(
 			default: 'pending',
 		},
 		dueDate: { type: Date, required: true },
-		assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+		assignedTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 		createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 		attechments: [{ type: String }], // URLs or paths to files
 		todoChecklist: [todoSchema], // Embedded sub-document for todos

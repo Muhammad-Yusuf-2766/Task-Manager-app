@@ -6,10 +6,15 @@ const app = express()
 const path = require('path')
 const connectDB = require('./config/db')
 
+const authRoutes = require('./routes/authRoutes')
+const userRoutes = require('./routes/userRoutes')
+const taskRoutes = require('./routes/taskRoutes')
+const reportRoutes = require('./routes/reportRoutes')
+
 // Middleware to handle cors
 app.use(
 	cors({
-		origin: process.env.CLIET_URL || 'http://localhost:3000',
+		origin: process.env.CLIENT_URL || 'http://localhost:3000',
 		methods: ['GET', 'POST', 'PUT', 'DELETE'],
 		credentials: true,
 		allowedHeaders: ['Content-Type', 'Authorization'],
@@ -23,10 +28,10 @@ connectDB()
 app.use(express.json())
 
 // Routes
-// app.use('/api/auth', require(authRoutes))
-// app.use('/api/users', require(userRoutes))
-// app.use('/api/tasks', require(taskRoutes))
-// app.use('/api/report', require(reportRoutes))
+app.use('/api/auth', authRoutes)
+app.use('/api/users', userRoutes)
+app.use('/api/tasks', taskRoutes)
+app.use('/api/report', reportRoutes)
 
 // Start the server
 const PORT = process.env.PORT || 5000
