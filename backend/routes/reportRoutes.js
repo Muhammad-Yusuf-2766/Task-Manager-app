@@ -1,5 +1,9 @@
 const express = require('express')
 const { isAuthenticated, isAdmin } = require('../middlewares/authMiddleware')
+const {
+	exportTasksreport,
+	exportUsersReport,
+} = require('../controllers/reportController')
 const router = express.Router()
 
 // Report routes

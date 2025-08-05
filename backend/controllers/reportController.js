@@ -72,11 +72,11 @@ const exportUsersReport = async (req, res) => {
 	try {
 		const users = await UserSchema.find().select('name email _id').lean()
 		const userTasks = await TaskSchema.find().populate(
-			'assignedTo',
+			'assignedTo', // Populate assignedTo field with user only names and emails fields
 			'name email'
 		)
 
-		const userTaskMap = {}	
+		const userTaskMap = {}
 		users.forEach(async user => {
 			userTaskMap[user._id] = {
 				name: user.name,
@@ -90,27 +90,46 @@ const exportUsersReport = async (req, res) => {
 			userTasks.forEach(task => {
 				if (task.assignedTo) {
 					task.assignedTo.forEach(assignedUser => {
-						if(userTaskMap[assignedUser])
-		const workbook = new excelJS.Workbook()
-		const worksheet = workbook.addWorksheet('Users Report')
-
-		worksheet.columns = [
-			{ header: 'User ID', key: '_id', width: 25 },
-			{ header: 'Name', key: 'name', width: 30 },
-			{ header: 'Email', key: 'email', width: 30 },
-			{ header: 'Role', key: 'role', width: 20 },
-		]
-
-		users.forEach(user => {
-			worksheet.addRow({
-				_id: user._id,
-				name: user.name,
-				email: user.email,
-				role: user.role,
+						if (userTaskMap[assignedUser._id])
+							userTaskMap[assignedUser._id].taskCount += 1
+						if (task.status === 'pending') {
+							userTaskMap[assignedUser._id].pendingTasks += 1
+						}
+						if (task.status === 'in-progress') {
+							userTaskMap[assignedUser._id].inProgressTasks += 1
+						}
+						if (task.status === 'completed') {
+							userTaskMap[assignedUser._id].completedTasks += 1
+						}
+					})
+				}
 			})
 		})
-		worksheet.getRow(1).font = { bold: true } // Make header row bold
 
+		const workbook = new excelJS.Workbook()
+		const worksheet = workbook.addWorksheet('User Task Report')
+
+		worksheet.columns = [
+			{ header: 'User Name', key: 'name', width: 30 },
+			{ header: 'Email', key: 'email', width: 30 },
+			{ header: 'Total Assigned Tasks', key: 'taskCount', width: 15 },
+			{ header: 'Pending Tasks', key: 'pendingTasks', width: 15 },
+			{ header: 'In Progress Tasks', key: 'inProgressTasks', width: 20 },
+			{ header: 'Completed Tasks', key: 'completedTasks', width: 20 },
+		]
+
+		Object.values(userTaskMap).forEach(user => {
+			worksheet.addRow({
+				name: user.name,
+				email: user.email,
+				taskCount: user.taskCount,
+				pendingTasks: user.pendingTasks,
+				inProgressTasks: user.inProgressTasks,
+				completedTasks: user.completedTasks,
+			})
+		})
+
+		worksheet.getRow(1).font = { bold: true } // Make header row bold
 		res.setHeader(
 			'Content-Type',
 			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -120,18 +139,22 @@ const exportUsersReport = async (req, res) => {
 			'attachment; filename=users_report.xlsx'
 		)
 
-		try {
-				await workbook.xlsx
-					.write(res)
+		return workbook.xlsx
+			.write(res)
+			.then(() => {
 				res.status(200).end()
-			} catch (error) {
+			})
+			.catch(error => {
 				res
 					.status(500)
 					.json({ message: 'Error generating report', error: error.message })
-			}
+			})
 	} catch (error) {
 		res.status(500).json({ message: 'Server error', error: error.message })
 	}
 }
 
-//
+module.exports = {
+	exportTasksreport,
+	exportUsersReport,
+}

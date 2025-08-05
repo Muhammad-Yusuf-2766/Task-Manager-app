@@ -1,10 +1,14 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
-import Login from './components/Login'
-import PrivateRoute from './components/PrivateRoute'
-import SignUp from './components/SignUp'
+import CreateTask from './pages/Admin/CreateTask'
+import Dashboard from './pages/Admin/Dashboard'
+import ManageTasks from './pages/Admin/ManageTasks'
+import ManageUsers from './pages/Admin/ManageUsers'
+import Login from './pages/Auth/Login'
+import SignUp from './pages/Auth/SignUp'
 import MyTasks from './pages/User/MyTasks'
 import UserDashboard from './pages/User/UserDashboard'
 import ViewTaskDetails from './pages/User/ViewTaskDetails'
+import PrivateRoute from './routes/PrivateRoute'
 
 const App = () => {
 	return (
@@ -18,8 +22,8 @@ const App = () => {
 					{/* === ADMIN Routes === */}
 					<Route element={<PrivateRoute allowedRoles={['admin']} />}>
 						<Route path='/admin/dashboard' element={<Dashboard />} />
-						<Route path='/admin/tasks' element={<ManagerTasks />} />
-						<Route path='/admin/users' element={<ManagerUsers />} />
+						<Route path='/admin/tasks' element={<ManageTasks />} />
+						<Route path='/admin/users' element={<ManageUsers />} />
 						<Route path='/admin/create-task' element={<CreateTask />} />
 					</Route>
 
