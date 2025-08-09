@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 
 const generateToken = userId => {
 	return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-		expiresIn: '1d',
+		expiresIn: '10d',
 	})
 }
 
@@ -88,7 +88,6 @@ const loginUser = async (req, res) => {
 // @access Private (requires jwt)
 const getUserProfile = async (req, res) => {
 	try {
-		console.log('getUserProfile:')
 		const user = await UserSchema.findById(req.user._id).select('-password')
 		// Check if user exists
 		if (!user) {

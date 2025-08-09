@@ -30,7 +30,7 @@ axiosInstance.interceptors.response.use(
 		return response
 	},
 	error => {
-		// Handle common errors globally
+		// Handle common errors globally.    // if jwt expired or other error
 		if (error.response) {
 			if (error.response.status === 401) {
 				// Redirect to login page

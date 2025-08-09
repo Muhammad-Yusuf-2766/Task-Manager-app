@@ -1,5 +1,7 @@
+import useUserAuth from '../../hooks/useUserAuth'
+
 const UserDashboard = () => {
-	// useUserAuth()
+	useUserAuth()
 	return <div>UserDashboard</div>
 }
 
