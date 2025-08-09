@@ -1,6 +1,9 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Input from '../../components/inputs/input'
+import UserContext from '../../context/userContext'
+import { API_PATHS } from '../../utils/apiPathes'
+import axiosInstance from '../../utils/axiosInstance'
 import { validateEmail } from '../../utils/helper'
 import AuthLayout from './AuthLayout'
 
@@ -9,7 +12,9 @@ const Login = () => {
 	const [password, setPassword] = useState('')
 	const [error, setError] = useState(null)
 
-	const navigete = useNavigate()
+	const { updateUser } = useContext(UserContext)
+
+	const navigate = useNavigate()
 
 	const handleLogin = async e => {
 		e.preventDefault()
@@ -26,6 +31,28 @@ const Login = () => {
 		setError(null)
 
 		// Login API call
+		try {
+			const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+				email,
+				password,
+			})
+
+			const { token, user } = response.data
+			if (token) {
+				localStorage.setItem('token', token)
+				updateUser(user)
+			}
+
+			if (user.role === 'admin') {
+				navigate('/admin/dashboard')
+			} else navigate('/user/dashboard')
+		} catch (error) {
+			if (error.response && error.response.data.message) {
+				setError(error.response.data.message)
+			} else {
+				setError('Something went wrong')
+			}
+		}
 	}
 
 	return (
@@ -42,6 +69,7 @@ const Login = () => {
 						value={email}
 						onChange={e => setEmail(e.target.value)}
 						type='email'
+						name='email'
 						label='Email Address'
 						placeholder='mike@gmail.com'
 					/>
@@ -49,6 +77,7 @@ const Login = () => {
 						value={password}
 						onChange={e => setPassword(e.target.value)}
 						type='password'
+						name='password'
 						label='Password'
 						placeholder='*********'
 					/>
@@ -62,7 +91,7 @@ const Login = () => {
 						Don't have an account?{' '}
 						<span
 							className='text-primary cursor-pointer'
-							onClick={() => navigete('/signup')}
+							onClick={() => navigate('/signup')}
 						>
 							Sign Up
 						</span>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa'
 
-const Input = ({ value, onChange, type, label, placeholder }) => {
+const Input = ({ value, onChange, type, label, placeholder, name }) => {
 	const [showPassword, setShowPassword] = useState(false)
 	const togglePasswordVisibility = () => {
 		setShowPassword(!showPassword)
@@ -17,10 +17,12 @@ const Input = ({ value, onChange, type, label, placeholder }) => {
 					type={
 						type == 'password' ? (showPassword ? 'text' : 'password') : type
 					}
+					name={name}
 					value={value}
 					onChange={e => onChange(e)}
 					placeholder={placeholder}
-					className='w-full bg-transparent outline-none '
+					className='w-full bg-transparent outline-none'
+					autoComplete={type === 'password' ? 'new-password' : 'new-email'}
 				/>
 
 				{type === 'password' && (

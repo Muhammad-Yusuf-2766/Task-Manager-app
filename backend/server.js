@@ -26,6 +26,8 @@ connectDB()
 
 // Middleware to parse JSON bodies
 app.use(express.json())
+// uploads papkani static qilib ochish
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 // Routes
 app.use('/api/auth', authRoutes)

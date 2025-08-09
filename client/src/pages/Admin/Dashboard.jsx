@@ -1,5 +1,9 @@
+import Dashboardlayout from '../../components/layouts/Dashboardlayout'
+
 const Dashboard = () => {
-	return <div>Dashboard</div>
+	// useUserAuth()
+
+	return <Dashboardlayout>Dashboard</Dashboardlayout>
 }
 
 export default Dashboard

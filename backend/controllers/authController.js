@@ -12,7 +12,6 @@ const generateToken = userId => {
 // @route POST /api/auth/register
 // @access Public
 const registerUser = async (req, res) => {
-	console.log('Registering user:')
 	try {
 		const { name, email, password, profileImageUrl, adminInviteToken } =
 			req.body
@@ -45,11 +44,8 @@ const registerUser = async (req, res) => {
 		// return user data and token
 		const token = generateToken(user._id)
 		res.status(201).json({
-			_id: user._id,
-			name: user.name,
-			email: user.email,
-			profileImageUrl: user.profileImageUrl,
-			role: user.role,
+			id: user._id,
+			user,
 			token,
 		})
 	} catch (error) {
@@ -78,11 +74,8 @@ const loginUser = async (req, res) => {
 		// Generate token
 		const token = generateToken(user._id)
 		res.status(200).json({
-			_id: user._id,
-			name: user.name,
-			email: user.email,
-			profileImageUrl: user.profileImageUrl,
-			role: user.role,
+			id: user._id,
+			user,
 			token,
 		})
 	} catch (error) {
@@ -95,6 +88,7 @@ const loginUser = async (req, res) => {
 // @access Private (requires jwt)
 const getUserProfile = async (req, res) => {
 	try {
+		console.log('getUserProfile:')
 		const user = await UserSchema.findById(req.user._id).select('-password')
 		// Check if user exists
 		if (!user) {
